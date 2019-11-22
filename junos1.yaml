@@ -1,0 +1,38 @@
+---
+  - name: Get facts
+    hosts: all
+    connection: local
+    gather_facts: false
+    
+    roles:
+      - Juniper.junos
+
+    vars_prompt:
+
+      - name: ADMUSER
+        prompt: Username
+        private: no
+
+      - name: ADMPASS
+        prompt: password
+        private: yes
+
+    tasks:
+      - name: Get Junos fact
+        junos_get_facts:
+          host: "{{inventory_hostname}}"
+          user: "{{ ADMUSER }}"
+          password: "{{ ADMPASS }}"
+        register: junos
+
+      - name: Get Junos fact
+        netconf_config:
+          backup: yes
+        register: backup_junos_location
+        vars:
+          ansible_private_key_file: "/etc/ansible/Key.pem"
+      
+      - name: print facts
+        debug:
+          var: junos.facts
+
