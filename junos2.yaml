@@ -1,0 +1,20 @@
+---
+  - name: Get facts
+    hosts: all
+    connection: local
+    gather_facts: false
+    
+    roles:
+      - Juniper.junos
+    tasks:
+      - name: Get Junos fact
+        netconf_config:
+        backup: yes
+        register: backup_junos_location
+        vars:
+          ansible_private_key_file: "/etc/ansible/Key.pem"
+
+      - name: print facts
+        debug:
+          var: junos.facts
+
